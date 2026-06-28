@@ -5,15 +5,13 @@ require('dotenv').config();
 let sequelize;
 
 if (process.env.MYSQL_URL) {
-  // Format: mysql://user:pass@host:3306/dbname
   sequelize = new Sequelize(process.env.MYSQL_URL, {
     dialect: 'mysql',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
     pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
     dialectOptions: {
-      ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: false }
-        : false,
+      ssl: false,
+      connectTimeout: 60000,
     },
   });
 } else {
@@ -27,6 +25,7 @@ if (process.env.MYSQL_URL) {
       dialect: 'mysql',
       logging: process.env.NODE_ENV === 'development' ? console.log : false,
       pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
+      dialectOptions: { connectTimeout: 60000 },
     }
   );
 }

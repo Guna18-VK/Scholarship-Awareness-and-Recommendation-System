@@ -10,7 +10,10 @@ Application.init({
   status:       { type: DataTypes.ENUM('applied','under_review','approved','rejected','withdrawn'), defaultValue: 'applied' },
   appliedAt:    { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   notes:        { type: DataTypes.TEXT },
-  documents:    { type: DataTypes.JSON, defaultValue: [] },
+  documents:    { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('documents'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('documents', JSON.stringify(v || [])); }
+  },
   adminRemarks: { type: DataTypes.TEXT },
   reviewedAt:   { type: DataTypes.DATE },
   reviewedBy:   { type: DataTypes.INTEGER },

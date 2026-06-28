@@ -17,13 +17,31 @@ Scholarship.init({
   minCGPA:              { type: DataTypes.DECIMAL(4,2), defaultValue: 0 },
   maxAnnualIncome:      { type: DataTypes.DECIMAL(12,2), defaultValue: null },
 
-  // Arrays stored as JSON in MySQL
-  eligibleCommunities:  { type: DataTypes.JSON, defaultValue: [] },
-  eligibleGenders:      { type: DataTypes.JSON, defaultValue: [] },
-  eligibleCourses:      { type: DataTypes.JSON, defaultValue: [] },
-  eligibleStates:       { type: DataTypes.JSON, defaultValue: [] },
-  requiredDocuments:    { type: DataTypes.JSON, defaultValue: [] },
-  tags:                 { type: DataTypes.JSON, defaultValue: [] },
+  // Arrays stored as JSON strings — TEXT for compatibility with older MySQL versions
+  eligibleCommunities:  { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('eligibleCommunities'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('eligibleCommunities', JSON.stringify(v || [])); }
+  },
+  eligibleGenders:      { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('eligibleGenders'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('eligibleGenders', JSON.stringify(v || [])); }
+  },
+  eligibleCourses:      { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('eligibleCourses'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('eligibleCourses', JSON.stringify(v || [])); }
+  },
+  eligibleStates:       { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('eligibleStates'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('eligibleStates', JSON.stringify(v || [])); }
+  },
+  requiredDocuments:    { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('requiredDocuments'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('requiredDocuments', JSON.stringify(v || [])); }
+  },
+  tags:                 { type: DataTypes.TEXT, defaultValue: '[]',
+    get() { const v = this.getDataValue('tags'); try { return v ? JSON.parse(v) : []; } catch { return []; } },
+    set(v) { this.setDataValue('tags', JSON.stringify(v || [])); }
+  },
 
   minAge: { type: DataTypes.INTEGER, defaultValue: 0 },
   maxAge: { type: DataTypes.INTEGER, defaultValue: 100 },
@@ -45,9 +63,6 @@ Scholarship.init({
   modelName: 'Scholarship',
   tableName: 'scholarships',
   timestamps: true,
-  indexes: [
-    { type: 'FULLTEXT', fields: ['name', 'provider', 'description'] },
-  ],
 });
 
 module.exports = Scholarship;
